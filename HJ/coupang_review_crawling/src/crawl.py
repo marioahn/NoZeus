@@ -103,17 +103,12 @@ class Coupang:
 
                 # 설문 태그(만족도)
                 qa_str = ''
-                survey_rows = soup.select('.sdp-review__article__list__survey__row')
+                
+                survey_rows = articles[idx].select('.sdp-review__article__list__survey__row')
                 for row in survey_rows:
                     question = row.select_one('.sdp-review__article__list__survey__row__question').text.strip()
                     answer = row.select_one('.sdp-review__article__list__survey__row__answer').text.strip()
-                    qa_str += f'{question}: {answer},' # todo ',를 기준으로 나눠서 각각 idx 추가하기'
-                
-                # answer = articles[idx].select_one('span.sdp-review__article__list__survey__row__answer')
-                # if answer == None or answer.text == '':
-                #     answer = '맛 평가 없음'
-                # else:
-                #     answer = answer.text.strip()
+                    qa_str += f'{question}: {answer},'
 
                 if qa_str == None or qa_str == '':
                     qa_str = '만족도 평가 없음'
@@ -125,7 +120,7 @@ class Coupang:
                 dict_data['rating'] = rating
                 dict_data['headline'] = headline
                 dict_data['review_content'] = review_content
-                dict_data['answer'] = qa_str # answer
+                dict_data['answer'] = qa_str
 
                 save_data.append(dict_data)
 

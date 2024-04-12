@@ -45,9 +45,11 @@ class Coupang:
 
         # URL 주소 재가공
         URLS : List[str] = [f'https://www.coupang.com/vp/product/reviews?productId={prod_code}&page={page}&size=5&sortBy=ORDER_SCORE_ASC&ratings=&q=&viRoleCode=3&ratingSummary=true' for page in range(1,self.input_page_count() + 1)]
-
+        
         # __headers에 referer 키 추가
         self.__headers['referer'] = URL
+        print('여기!!', URL)
+        
 
         with rq.Session() as session:
             return [self.fetch(url=url,session=session) for url in URLS]
@@ -66,7 +68,7 @@ class Coupang:
                 dict_data : Dict[str,Union[str,int]] = dict()
                 articles = soup.select('article.sdp-review__article__list')
 
-                # 구매자 이름
+                # 구매자 이름               
                 user_name = articles[idx].select_one('span.sdp-review__article__list__info__user__name')
                 if user_name == None or user_name.text == '':
                     user_name = '-'
@@ -146,8 +148,8 @@ class Coupang:
             if not review_url :
                 # Window
                 os.system('cls')
-                # Mac
-                #os.system('clear')
+                # Mac 
+                # os.system('clear') # 맥에서 돌리려면, 이 부분 주석 해제해야 함
                 print('URL 주소가 입력되지 않았습니다')
                 continue
             return review_url

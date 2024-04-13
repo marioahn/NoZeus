@@ -47,9 +47,7 @@ class Coupang:
         URLS : List[str] = [f'https://www.coupang.com/vp/product/reviews?productId={prod_code}&page={page}&size=5&sortBy=ORDER_SCORE_ASC&ratings=&q=&viRoleCode=3&ratingSummary=true' for page in range(1,self.input_page_count() + 1)]
         
         # __headers에 referer 키 추가
-        self.__headers['referer'] = URL
-        print('여기!!', URL)
-        
+        self.__headers['referer'] = URL        
 
         with rq.Session() as session:
             return [self.fetch(url=url,session=session) for url in URLS]
@@ -98,14 +96,16 @@ class Coupang:
 
                 # 리뷰 내용
                 review_content = articles[idx].select_one('div.sdp-review__article__list__review > div')
+                
                 if review_content == None :
-                    review_content = '등록된 리뷰내용이 없습니다'
+                    cleaned_review_content = '등록된 리뷰내용이 없습니다'
                 else:
                     review_content = re.sub('[\n\t]','',review_content.text.strip())
+                    # 한 번더 clean해서 excel에 들어갈 수 없는 문자 제거 -> 이거때문에 크롤링 좀 더 걸리게 됨 ㅠ
+                    cleaned_review_content = ''.join(char for char in review_content if char.isprintable()) 
 
                 # 설문 태그(만족도)
                 qa_str = ''
-                
                 survey_rows = articles[idx].select('.sdp-review__article__list__survey__row')
                 for row in survey_rows:
                     question = row.select_one('.sdp-review__article__list__survey__row__question').text.strip()
@@ -121,7 +121,7 @@ class Coupang:
                 dict_data['user_name'] = user_name
                 dict_data['rating'] = rating
                 dict_data['headline'] = headline
-                dict_data['review_content'] = review_content
+                dict_data['review_content'] = cleaned_review_content
                 dict_data['answer'] = qa_str
 
                 save_data.append(dict_data)

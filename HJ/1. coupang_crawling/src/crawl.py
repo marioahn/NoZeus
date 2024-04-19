@@ -128,7 +128,7 @@ class Coupang:
 
                 print(dict_data , '\n')
 
-            time.sleep(1)
+            time.sleep(1) # time
 
             return save_data
     
